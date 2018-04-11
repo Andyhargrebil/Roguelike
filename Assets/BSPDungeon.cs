@@ -71,7 +71,7 @@ public class BSPDungeon : MonoBehaviour
         {
             for (int j = 0; j < width; j++)
             {
-                if (i <= leftRoom.top && i > leftRoom.top - leftRoom.height && j >= leftRoom.left && j<= leftRoom.width)
+                if (i <= leftRoom.top && i > leftRoom.top - leftRoom.height && j >= leftRoom.left && j<= leftRoom.width + leftRoom.left)
                 {
                     level[i, j] = "L";
                 } else if (i <= rightRoom.top && i > rightRoom.top - rightRoom.height && j >= rightRoom.left && j <= rightRoom.width + rightRoom.left)

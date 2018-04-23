@@ -7,65 +7,30 @@ public class TreeRectDebug : MonoBehaviour {
 
     public int levelWidth = 20;
     public int levelHeight = 20;
+    public int splits = 5;
     System.Text.StringBuilder sb = new System.Text.StringBuilder();
+
+    List<BinaryTreeNode<RectInt>> Leaves = new List<BinaryTreeNode<RectInt>>();
 
     private string[,] level;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start() {
 
         level = new string[levelHeight, levelWidth];
 
         BinaryTree<RectInt> sampleRectTree = new BinaryTree<RectInt>(new RectInt(0, 0, levelWidth, levelHeight));
 
-        int partitionWidth = levelWidth / 2;
-        int partitionHeight = levelHeight;
+        RecursiveSplit(sampleRectTree.Root(), splits);
+        RecursiveDive(sampleRectTree.Root());
 
-        RectInt leftPartitionRect = new RectInt(0, 0, partitionWidth, partitionHeight);
-        BinaryTreeNode<RectInt> leftPartitionNode = sampleRectTree.Root().AddChild(leftPartitionRect);
-
-        int rightPartitionX = levelWidth / 2;
-        int rightPartitionY = 0;
-        RectInt rightPartitionRect = new RectInt(rightPartitionX, rightPartitionY, partitionWidth, partitionHeight);
-        BinaryTreeNode<RectInt> rightPartitionNode = sampleRectTree.Root().AddChild(rightPartitionRect);
-
-        RectInt leftPartitionWorld = NodeRectWorld(leftPartitionNode);
-        RectInt rightPartitionWorld = NodeRectWorld(rightPartitionNode);
-
-        partitionHeight /= 2;
-        RectInt upperLeftPartitionRect = new RectInt(0, 0, partitionWidth, partitionHeight);
-        RectInt lowerLeftPartitionRect = new RectInt(0, partitionHeight, partitionWidth, partitionHeight);
-
-        RectInt upperRightPartitionRect = new RectInt(0, 0, partitionWidth, partitionHeight);
-        RectInt lowerRightPartitionRect = new RectInt(0, partitionHeight, partitionWidth, partitionHeight);
-
-        BinaryTreeNode<RectInt> uLPartitionNode = leftPartitionNode.AddChild(upperLeftPartitionRect);
-        BinaryTreeNode<RectInt> lLPartitionNode = leftPartitionNode.AddChild(lowerLeftPartitionRect);
-        BinaryTreeNode<RectInt> uRPartitionNode = rightPartitionNode.AddChild(upperRightPartitionRect);
-        BinaryTreeNode<RectInt> lRPartitionNode = rightPartitionNode.AddChild(lowerRightPartitionRect);
-
-        RectInt upperLeftNode = NodeRectWorld(uLPartitionNode);
-        RectInt lowerLeftNode = NodeRectWorld(lLPartitionNode);
-        RectInt upperRightNode = NodeRectWorld(uRPartitionNode);
-        RectInt lowerRightNode = NodeRectWorld(lRPartitionNode);
-
-        print("Left: " + leftPartitionWorld);
-        print("Right: " + rightPartitionWorld);
-
-        print("upper left: " + upperLeftPartitionRect);
-        print("lower left: " + lowerLeftPartitionRect);
-        print("upper right: " + upperRightPartitionRect);
-        print("lower right: " + lowerRightPartitionRect);
-
-        print("upper left: " + upperLeftNode);
-        print("lower left: " + lowerLeftNode);
-        print("upper right: " + upperRightNode);
-        print("lower right: " + lowerRightNode);
-
-        MakeRoom(upperLeftNode, "1");
-        MakeRoom(lowerLeftNode, "2");
-        MakeRoom(upperRightNode, "3");
-        MakeRoom(lowerRightNode, "4");
+        int counter = 1;
+        foreach(BinaryTreeNode<RectInt> leaf in Leaves)
+        {
+            RectInt TheNode = NodeRectWorld(leaf);
+            MakeRoom(TheNode, counter.ToString());
+            counter++;
+        }
 
         for (int i = 0; i < levelHeight; i++)
         {
@@ -76,9 +41,6 @@ public class TreeRectDebug : MonoBehaviour {
             sb.AppendLine();
         }
         print(sb.ToString());
-
-        
-        
     }
 
     private RectInt NodeRectWorld(BinaryTreeNode<RectInt> node)
@@ -101,13 +63,58 @@ public class TreeRectDebug : MonoBehaviour {
         // TODO: Set the values of level[,] that are inside
         // the area specified by RectInt region
 
-        for(int i = region.y; i < region.y + region.height; ++i)
+        for (int i = region.y; i < region.y + region.height; ++i)
         {
-            for(int j = region.x; j < region.x + region.width; ++j)
+            for (int j = region.x; j < region.x + region.width; ++j)
             {
                 level[i, j] = value;
             }
         }
+    }
+
+    void RecursiveDive(BinaryTreeNode<RectInt> T)
+    {
+        if (T.IsLeaf())
+        {
+            Leaves.Add(T);
+            return;
+        }
+        
+        if (T.leftChild != null)
+            RecursiveDive(T.leftChild);
+        if (T.rightChild != null)
+            RecursiveDive(T.rightChild);
+    }
+
+    private void HorSplit(BinaryTreeNode<RectInt> T)
+    {
+        RectInt current = T.Value();
+        RectInt upperRect = new RectInt(0, 0, current.width, current.height / 2);
+        RectInt lowerRect = new RectInt(0, current.height/2, current.width, current.height / 2);
+        BinaryTreeNode<RectInt> upper = T.AddChild(upperRect);
+        BinaryTreeNode<RectInt> lower = T.AddChild(lowerRect);
+    }
+
+    private void VerSplit(BinaryTreeNode<RectInt> T)
+    {
+        RectInt current = T.Value();
+        RectInt leftRect = new RectInt(0, 0, current.width/2, current.height);
+        RectInt rightRect = new RectInt(current.width/2, 0, current.width/2, current.height);
+        BinaryTreeNode<RectInt> left = T.AddChild(leftRect);
+        BinaryTreeNode<RectInt> right = T.AddChild(rightRect);
+    }
+
+    private void RecursiveSplit(BinaryTreeNode<RectInt> T, int numSplits)
+    {
+        if (numSplits == 0) return;
+
+        if (numSplits % 2 == 1)
+            VerSplit(T);
+        else
+            HorSplit(T);
+        
+        RecursiveSplit(T.leftChild, numSplits - 1);
+        RecursiveSplit(T.rightChild, numSplits - 1);
     }
 	
 	// Update is called once per frame

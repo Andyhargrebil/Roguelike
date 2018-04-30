@@ -177,6 +177,16 @@ Prefab:
       propertyPath: splits
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 114559622063182526, guid: 8fd93cea3854a50459efef64e160114f,
+        type: 2}
+      propertyPath: levelWidth
+      value: 32
+      objectReference: {fileID: 0}
+    - target: {fileID: 114559622063182526, guid: 8fd93cea3854a50459efef64e160114f,
+        type: 2}
+      propertyPath: levelHeight
+      value: 32
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 8fd93cea3854a50459efef64e160114f, type: 2}
   m_IsPrefabParent: 0

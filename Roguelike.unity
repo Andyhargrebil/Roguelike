@@ -175,7 +175,7 @@ Prefab:
     - target: {fileID: 114559622063182526, guid: 8fd93cea3854a50459efef64e160114f,
         type: 2}
       propertyPath: splits
-      value: 4
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 114559622063182526, guid: 8fd93cea3854a50459efef64e160114f,
         type: 2}
